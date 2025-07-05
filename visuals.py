@@ -8,20 +8,22 @@ import plotly.express as px
 st.title("🚢 AIS Real-Time Dashboard")
 st.caption("Refreshing every 3 seconds to simulate real-time updates.")
 
-# Load data
+# Load main dashboard data
 def load_data():
     df = pd.read_csv("ais_data_sample_with_trajectories.csv")
     df['sog'] = pd.to_numeric(df['sog'], errors='coerce')
     df['heading'] = pd.to_numeric(df['heading'], errors='coerce')
     df['width'] = pd.to_numeric(df['width'], errors='coerce')
     df['length'] = pd.to_numeric(df['length'], errors='coerce')
-    
     required_columns = ['sog', 'heading', 'width', 'length']
     optional_geo = ['LAT', 'LON']
     available_geo = [col for col in optional_geo if col in df.columns]
     df = df.dropna(subset=required_columns + available_geo)
-
     return df
+
+# Load animated data separately
+def load_animated_data():
+    return pd.read_csv("ais_animated_trajectory_sample.csv")
 
 # Load and prepare data
 df = load_data()
@@ -44,33 +46,32 @@ if 'shiptype' in subset.columns:
 else:
     st.warning("Column 'shiptype' not found in dataset.")
 
-# Vessel Trajectory Plot (if data is available)
-st.subheader("🗺️ Vessel Trajectories (Top 5)")
-if all(col in df.columns for col in ['LAT', 'LON', 'VesselName']):
-    top_vessels = df['VesselName'].value_counts().head(5).index
-    df_traj = df[df['VesselName'].isin(top_vessels)]
+# 🌍 Animated Trajectory Map
+st.subheader("🛰️ Live-like Animated Vessel Trajectories")
+animated_df = load_animated_data()
 
-    fig = px.line_mapbox(
-        df_traj,
+if all(col in animated_df.columns for col in ['LAT', 'LON', 'timestamp', 'VesselName']):
+    fig = px.scatter_mapbox(
+        animated_df,
         lat='LAT',
         lon='LON',
         color='VesselName',
-        line_group='VesselName',
+        size='sog',
         hover_name='VesselName',
-        zoom=3,
-        height=500
+        animation_frame='timestamp',
+        zoom=2,
+        height=600
     )
-
-    fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(mapbox_style="carto-positron")
     fig.update_layout(margin={"r":0, "t":0, "l":0, "b":0})
     st.plotly_chart(fig)
 else:
-    st.warning("LAT/LON/VesselName columns not found – skipping trajectory map.")
+    st.warning("Animated map data is missing required columns.")
 
 # Data table
 st.subheader("📊 Latest Sample Data")
 st.dataframe(subset)
 
-# Auto-refresh every 3 seconds
+# Refresh every 3 seconds
 time.sleep(3)
 st.rerun()
