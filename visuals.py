@@ -9,7 +9,7 @@ st.caption("Refreshing every 5 seconds to simulate real-time updates.")
 
 # Load data
 def load_data():
-    df = pd.read_csv("ais_data.csv")
+    df = pd.read_csv("ais_data_sample.csv")
     df['sog'] = pd.to_numeric(df['sog'], errors='coerce')
     df['heading'] = pd.to_numeric(df['heading'], errors='coerce')
     df['width'] = pd.to_numeric(df['width'], errors='coerce')
