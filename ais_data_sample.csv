@@ -1,0 +1,101 @@
+Unnamed: 0,mmsi,navigationalstatus,sog,cog,heading,shiptype,width,length,draught
+0,219019621,Unknown value,0.0,86.0,86.0,Fishing,4.0,9.0,
+1,265628170,Unknown value,0.0,334.5,,Port tender,8.0,27.0,
+2,219005719,Unknown value,0.0,208.7,,Fishing,4.0,11.0,
+3,219028066,Unknown value,0.0,,,Pleasure,3.0,12.0,
+4,212584000,Moored,0.0,153.0,106.0,Cargo,13.0,99.0,6.3
+5,636020662,At anchor,0.1,43.9,286.0,Cargo,23.0,149.0,6.3
+6,219006116,Unknown value,0.0,0.0,,Fishing,,,
+7,246539000,At anchor,0.0,3.8,293.0,Cargo,16.0,150.0,6.8
+8,210307000,Moored,0.0,285.1,225.0,Cargo,16.0,90.0,5.2
+9,219003138,Unknown value,0.0,0.0,,Fishing,4.0,10.0,
+10,219027820,Unknown value,0.1,,,Sailing,4.0,13.0,
+11,219263000,Moored,0.0,353.9,100.0,Military,12.0,48.0,4.2
+12,219028878,Unknown value,0.0,93.7,93.0,Sailing,4.0,15.0,
+13,219023719,Unknown value,0.0,8.7,,Pleasure,3.0,8.0,
+14,265771450,Unknown value,0.0,308.4,,Sailing,3.0,13.0,
+15,231794000,Moored,0.0,327.5,242.0,Cargo,13.0,83.0,3.6
+16,265811820,Unknown value,0.0,,,Sailing,3.0,10.0,
+17,219014192,Unknown value,0.0,224.1,,Fishing,4.0,12.0,
+18,219026303,Unknown value,0.0,,,Passenger,6.0,24.0,
+19,273390790,At anchor,0.0,97.8,222.0,Cargo,13.0,96.0,5.3
+20,219005991,Unknown value,0.1,,,Dredging,3.0,9.0,
+21,219029104,Unknown value,0.0,,,Pleasure,4.0,13.0,
+22,235079183,Unknown value,0.0,0.0,,Pleasure,4.0,11.0,
+23,219025741,Unknown value,0.0,,,Pleasure,4.0,11.0,
+24,219000174,Moored,0.0,283.1,223.0,Military,,,2.5
+25,219002409,Unknown value,0.0,0.0,,Fishing,5.0,15.0,
+26,219026301,Unknown value,0.1,,,Passenger,6.0,23.0,
+27,219007035,Unknown value,0.0,0.0,,Passenger,6.0,20.0,
+28,373332000,At anchor,0.0,358.5,279.0,Cargo,32.0,229.0,7.2
+29,265621730,Unknown value,0.0,268.0,,Sailing,3.0,10.0,
+30,219004634,Unknown value,0.3,,,Pleasure,,,
+31,219014266,Unknown value,0.0,0.0,,Port tender,4.0,8.0,
+32,219007731,Unknown value,0.0,0.0,,Law enforcement,2.0,8.0,
+33,219364000,Moored,0.0,329.8,60.0,Cargo,15.0,74.0,5.0
+34,219014412,Moored,0.0,276.7,112.0,Sailing,9.0,27.0,2.2
+35,577534000,Moored,0.0,354.0,45.0,Tug,20.0,82.0,6.0
+36,255806370,Moored,0.0,171.6,42.0,Cargo,23.0,141.0,6.6
+37,219016663,Moored,0.0,357.4,262.0,HSC,6.0,21.0,2.1
+38,220001000,Moored,0.0,349.3,288.0,Sailing,6.0,25.0,2.5
+39,219024815,Unknown value,0.0,,,Pleasure,5.0,16.0,
+40,219006386,Unknown value,0.0,216.5,,Passenger,6.0,20.0,
+41,230642000,Moored,0.0,185.4,166.0,Cargo,27.0,187.0,5.8
+42,311379000,Under way using engine,13.4,34.1,34.0,Cargo,29.0,190.0,9.9
+43,219005787,Moored,0.0,,,Towing,5.0,13.0,2.0
+44,219026520,Unknown value,0.1,207.0,,Sailing,8.0,13.0,
+45,255805988,At anchor,0.0,69.1,41.0,Cargo,14.0,99.0,6.2
+46,219027249,Unknown value,0.1,351.6,,Pleasure,4.0,20.0,
+47,219021244,Moored,0.0,323.9,36.0,Tug,12.0,30.0,4.8
+48,219008177,Unknown value,0.0,,,Sailing,4.0,12.0,
+49,219012563,Moored,0.0,220.7,60.0,Tug,5.0,10.0,1.7
+50,219027290,Unknown value,0.0,343.4,343.0,Pleasure,3.0,8.0,
+51,219022162,Unknown value,0.1,286.3,,Pleasure,4.0,,
+52,311818000,Moored,0.0,17.0,51.0,Cargo,11.0,82.0,2.9
+53,244750397,Under way using engine,12.6,137.4,137.0,Cargo,14.0,89.0,3.7
+54,219000217,Moored,0.0,20.2,,Military,9.0,54.0,3.6
+55,265002810,Unknown value,0.0,,,Pleasure,2.0,12.0,
+56,219996000,Moored,0.0,200.0,238.0,Towing,7.0,21.0,3.4
+57,219025508,Unknown value,0.0,0.0,,Pleasure,,,
+58,219003406,Moored,0.1,150.9,241.0,Tug,4.0,15.0,2.5
+59,219016223,Unknown value,0.0,,,Sailing,4.0,11.0,
+60,219028070,Unknown value,0.0,,,Pleasure,2.0,6.0,
+61,219871000,Unknown value,0.0,310.2,,Fishing,6.0,20.0,
+62,230987000,Moored,0.0,248.6,38.0,Passenger,31.0,219.0,6.0
+63,219014521,Unknown value,0.0,318.0,,Pleasure,4.0,16.0,
+64,219000179,Moored,0.0,186.5,229.0,Military,6.0,25.0,2.5
+65,219002998,Unknown value,0.0,314.3,,Pleasure,6.0,17.0,
+66,219022542,Unknown value,0.0,,,Sailing,4.0,10.0,
+67,219014399,Unknown value,0.2,9.5,,Sailing,4.0,12.0,
+68,266416000,Moored,0.0,30.1,145.0,Cargo,18.0,99.0,4.3
+69,219026306,Unknown value,0.0,,,Passenger,6.0,24.0,
+70,314303000,Under way using engine,8.6,333.1,336.0,Cargo,14.0,98.0,3.9
+71,219026076,Unknown value,0.0,179.3,,Pleasure,3.0,9.0,
+72,219000657,Unknown value,0.0,0.0,,Sailing,6.0,34.0,
+73,219004355,Unknown value,0.0,320.7,,Tug,4.0,17.0,
+74,219022736,Unknown value,0.0,153.0,,Pleasure,,,
+75,220434000,Moored,0.0,195.6,101.0,Military,9.0,43.0,2.6
+76,219003232,Unknown value,0.0,75.5,,Sailing,6.0,29.0,
+77,265712190,Unknown value,0.0,0.0,,Pleasure,6.0,19.0,
+78,219026833,Unknown value,0.2,,,Pleasure,4.0,10.0,
+79,219002783,Moored,0.0,295.2,1.0,SAR,6.0,15.0,3.0
+80,219016194,Unknown value,0.0,,,Pleasure,3.0,12.0,
+81,249598000,Moored,0.0,334.3,33.0,Tanker,19.0,132.0,8.3
+82,219025840,Moored,0.0,60.0,309.0,Pilot,7.0,17.0,1.5
+83,219001083,Moored,0.0,0.0,61.0,Tug,8.0,22.0,3.4
+84,265721400,Unknown value,0.0,71.3,,Passenger,6.0,19.0,
+85,265786790,Unknown value,0.0,212.0,,Pleasure,2.0,10.0,
+86,257840000,Under way using engine,11.8,337.4,339.0,Tanker,23.0,144.0,7.7
+87,212111000,Under way using engine,12.7,210.1,212.0,Tanker,30.0,176.0,9.4
+88,219002973,Moored,0.0,,,Passenger,4.0,14.0,1.8
+89,265591210,Unknown value,0.0,,,Sailing,4.0,13.0,
+90,219023641,Unknown value,0.1,144.0,,Sailing,5.0,15.0,
+91,311379000,Under way using engine,13.4,32.0,33.0,Cargo,29.0,190.0,9.9
+92,219849000,Moored,0.0,104.0,323.0,Tug,20.0,130.0,7.5
+93,219004695,Unknown value,0.0,191.2,,Passenger,6.0,20.0,
+94,219007078,Unknown value,0.0,205.9,,Pleasure,5.0,15.0,
+95,257840000,Under way using engine,11.9,337.8,337.0,Tanker,23.0,144.0,7.7
+96,219002066,Moored,0.0,182.8,280.0,Military,7.0,16.0,2.8
+97,219018833,Moored,0.1,163.9,34.0,Dredging,8.0,30.0,3.5
+98,244093000,Under way using engine,10.3,341.4,340.0,Cargo,14.0,90.0,5.7
+99,311051000,Under way using engine,14.5,161.3,162.0,Cargo,,,7.7
