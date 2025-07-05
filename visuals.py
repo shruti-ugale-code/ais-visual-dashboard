@@ -15,17 +15,20 @@ def load_data():
     df['heading'] = pd.to_numeric(df['heading'], errors='coerce')
     df['width'] = pd.to_numeric(df['width'], errors='coerce')
     df['length'] = pd.to_numeric(df['length'], errors='coerce')
-    df = df.dropna(subset=['sog', 'heading', 'width', 'length', 'LAT', 'LON'])
+    
+    required_columns = ['sog', 'heading', 'width', 'length']
+    optional_geo = ['LAT', 'LON']
+    available_geo = [col for col in optional_geo if col in df.columns]
+    df = df.dropna(subset=required_columns + available_geo)
+
     return df
 
+# Load and prepare data
 df = load_data()
-
-# Sample a subset to simulate changing visuals
 subset = df.sample(20)
 
-# Column layout
+# Layout: SOG and Heading
 col1, col2 = st.columns(2)
-
 with col1:
     st.subheader("Speed Over Ground (SOG)")
     st.line_chart(subset['sog'])
@@ -37,14 +40,12 @@ with col2:
 # Ship Type Count
 st.subheader("🚢 Ship Type Count")
 if 'shiptype' in subset.columns:
-    ship_type_count = subset['shiptype'].value_counts()
-    st.bar_chart(ship_type_count)
+    st.bar_chart(subset['shiptype'].value_counts())
 else:
-    st.warning("Column 'shiptype' not found in the dataset.")
+    st.warning("Column 'shiptype' not found in dataset.")
 
-# 🗺️ Vessel Trajectories
+# Vessel Trajectory Plot (if data is available)
 st.subheader("🗺️ Vessel Trajectories (Top 5)")
-
 if all(col in df.columns for col in ['LAT', 'LON', 'VesselName']):
     top_vessels = df['VesselName'].value_counts().head(5).index
     df_traj = df[df['VesselName'].isin(top_vessels)]
@@ -62,15 +63,14 @@ if all(col in df.columns for col in ['LAT', 'LON', 'VesselName']):
 
     fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(margin={"r":0, "t":0, "l":0, "b":0})
-
     st.plotly_chart(fig)
 else:
-    st.warning("LAT, LON, or VesselName columns not found for trajectory plotting.")
+    st.warning("LAT/LON/VesselName columns not found – skipping trajectory map.")
 
 # Data table
 st.subheader("📊 Latest Sample Data")
 st.dataframe(subset)
 
-# Sleep + refresh
+# Auto-refresh every 3 seconds
 time.sleep(3)
 st.rerun()
