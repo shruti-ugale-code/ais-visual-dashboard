@@ -43,5 +43,5 @@ st.subheader("📊 Latest Sample Data")
 st.dataframe(subset)
 
 # Sleep + refresh
-time.sleep(5)
+time.sleep(2)
 st.rerun()
