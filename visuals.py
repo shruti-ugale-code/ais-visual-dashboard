@@ -10,7 +10,7 @@ st.caption("Refreshing every 3 seconds to simulate real-time updates.")
 
 # Load main dashboard data
 def load_data():
-    df = pd.read_csv("ais_data_sample_with_trajectories.csv")
+    df = pd.read_csv("ais_singapore_strait_animated.csv")
     df['sog'] = pd.to_numeric(df['sog'], errors='coerce')
     df['heading'] = pd.to_numeric(df['heading'], errors='coerce')
     df['width'] = pd.to_numeric(df['width'], errors='coerce')
