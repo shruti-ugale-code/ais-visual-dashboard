@@ -1,77 +1,42 @@
 import streamlit as st
 import pandas as pd
-import time
-import random
 import plotly.express as px
 
-# Title
-st.title("🚢 AIS Real-Time Dashboard")
-st.caption("Refreshing every 3 seconds to simulate real-time updates.")
+st.set_page_config(layout="wide")
+st.title("📍 Vessel Trajectories (Top 5)")
 
-# Load main dashboard data
+# Load Data
+@st.cache_data
 def load_data():
-    df = pd.read_csv("ais_singapore_strait_animated.csv")
-    df['sog'] = pd.to_numeric(df['sog'], errors='coerce')
-    df['heading'] = pd.to_numeric(df['heading'], errors='coerce')
-    df['width'] = pd.to_numeric(df['width'], errors='coerce')
-    df['length'] = pd.to_numeric(df['length'], errors='coerce')
-    required_columns = ['sog', 'heading', 'width', 'length']
-    optional_geo = ['LAT', 'LON']
-    available_geo = [col for col in optional_geo if col in df.columns]
-    df = df.dropna(subset=required_columns + available_geo)
+    df = pd.read_csv("ais_cleaned_trajectories.csv")
+    df = df.dropna(subset=["LAT", "LON", "timestamp", "VesselName"])
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
     return df
 
-# Load animated data separately
-def load_animated_data():
-    return pd.read_csv("ais_cleaned_trajectories.csv")
-
-# Load and prepare data
 df = load_data()
-subset = df.sample(20)
 
-# Layout: SOG and Heading
-col1, col2 = st.columns(2)
-with col1:
-    st.subheader("Speed Over Ground (SOG)")
-    st.line_chart(subset['sog'])
+# Top 5 Vessels by point count
+top_vessels = df['VesselName'].value_counts().head(5).index.tolist()
+filtered_df = df[df['VesselName'].isin(top_vessels)]
 
-with col2:
-    st.subheader("Heading Distribution")
-    st.bar_chart(subset['heading'])
+# Plot line trajectories
+fig = px.line_mapbox(
+    filtered_df.sort_values("timestamp"),
+    lat="LAT",
+    lon="LON",
+    color="VesselName",
+    line_group="VesselName",
+    zoom=5,
+    height=600
+)
 
-# Ship Type Count
-st.subheader("🚢 Ship Type Count")
-if 'shiptype' in subset.columns:
-    st.bar_chart(subset['shiptype'].value_counts())
-else:
-    st.warning("Column 'shiptype' not found in dataset.")
+fig.update_layout(
+    mapbox_style="open-street-map",
+    margin={"r": 0, "t": 0, "l": 0, "b": 0},
+)
 
-# 🌍 Animated Trajectory Map
-st.subheader("🛰️ Live-like Animated Vessel Trajectories")
-animated_df = load_animated_data()
+st.plotly_chart(fig, use_container_width=True)
 
-if all(col in animated_df.columns for col in ['LAT', 'LON', 'timestamp', 'VesselName']):
-    fig = px.scatter_mapbox(
-        animated_df,
-        lat='LAT',
-        lon='LON',
-        color='VesselName',
-        size='sog',
-        hover_name='VesselName',
-        animation_frame='timestamp',
-        zoom=2,
-        height=600
-    )
-    fig.update_layout(mapbox_style="carto-positron")
-    fig.update_layout(margin={"r":0, "t":0, "l":0, "b":0})
-    st.plotly_chart(fig)
-else:
-    st.warning("Animated map data is missing required columns.")
-
-# Data table
+# Latest data table
 st.subheader("📊 Latest Sample Data")
-st.dataframe(subset)
-
-# Refresh every 3 seconds
-time.sleep(3)
-st.rerun()
+st.dataframe(filtered_df.sample(20))
