@@ -23,7 +23,7 @@ def load_data():
 
 # Load animated data separately
 def load_animated_data():
-    return pd.read_csv("ais_animated_trajectory_sample.csv")
+    return pd.read_csv("ais_cleaned_trajectories.csv")
 
 # Load and prepare data
 df = load_data()
