@@ -1,88 +1,63 @@
 import streamlit as st
 import pandas as pd
-import time
-import random
 import plotly.express as px
+import time
 
-# Title
-st.title("🚢 AIS Real-Time Dashboard")
-st.caption("Refreshing every 3 seconds to simulate real-time updates.")
+st.set_page_config(page_title="AIS Trajectories", layout="wide")
 
-# Load main dashboard data
+st.title("🌊 Vessel Trajectories (Top 5)")
+
+# --- Load data ---
+@st.cache_data
 def load_data():
-    df = pd.read_csv("ais_singapore_strait_animated.csv")
-    df['sog'] = pd.to_numeric(df['sog'], errors='coerce')
-    df['heading'] = pd.to_numeric(df['heading'], errors='coerce')
-    df['width'] = pd.to_numeric(df['width'], errors='coerce')
-    df['length'] = pd.to_numeric(df['length'], errors='coerce')
-    required_columns = ['sog', 'heading', 'width', 'length']
-    optional_geo = ['LAT', 'LON']
-    available_geo = [col for col in optional_geo if col in df.columns]
-    df = df.dropna(subset=required_columns + available_geo)
-    return df
-
-# Load animated data separately
-# Load and filter animated data for sea region only
-def load_animated_data():
-    df = pd.read_csv("ais_animated_trajectory_sample.csv")
-    # Clean LAT/LON
+    df = pd.read_csv("ais_animated_trajectory_sample.csv")  # <- your CSV name
     df["LAT"] = pd.to_numeric(df["LAT"], errors="coerce")
     df["LON"] = pd.to_numeric(df["LON"], errors="coerce")
-    df.dropna(subset=["LAT", "LON"], inplace=True)
-    
-    # Filter out land points
-    df = df[(df["LAT"] >= 0.5) & (df["LAT"] <= 2.0) &
-            (df["LON"] >= 101.0) & (df["LON"] <= 105.0)]
-    
+    df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    df.dropna(subset=["LAT", "LON", "VesselName", "timestamp"], inplace=True)
     return df
 
-# Load and prepare data
+# --- Remove land by bounding box (adjust lat/lon if needed) ---
+def remove_land_points(df):
+    sea_df = df[
+        (df["LAT"] >= 1.0) & (df["LAT"] <= 2.0) &   # Example for Singapore Strait
+        (df["LON"] >= 103.0) & (df["LON"] <= 105.0)
+    ]
+    return sea_df
+
 df = load_data()
-subset = df.sample(20)
+df = remove_land_points(df)
 
-# Layout: SOG and Heading
-col1, col2 = st.columns(2)
-with col1:
-    st.subheader("Speed Over Ground (SOG)")
-    st.line_chart(subset['sog'])
+# --- Vessel filter ---
+top_vessels = df["VesselName"].value_counts().head(5).index.tolist()
+selected_vessels = st.multiselect("Select vessels to display:", top_vessels, default=top_vessels)
 
-with col2:
-    st.subheader("Heading Distribution")
-    st.bar_chart(subset['heading'])
+# --- Filter data ---
+filtered = df[df["VesselName"].isin(selected_vessels)]
 
-# Ship Type Count
-st.subheader("🚢 Ship Type Count")
-if 'shiptype' in subset.columns:
-    st.bar_chart(subset['shiptype'].value_counts())
-else:
-    st.warning("Column 'shiptype' not found in dataset.")
-
-# 🌍 Animated Trajectory Map (Ships as points)
-st.subheader("🛰️ Live-like Animated Vessel Trajectories")
-animated_df = load_animated_data()
-
-if all(col in animated_df.columns for col in ['LAT', 'LON', 'timestamp', 'VesselName']):
-    fig = px.scatter_mapbox(
-        animated_df,
-        lat='LAT',
-        lon='LON',
-        color='VesselName',
-        size='sog',
-        hover_name='VesselName',
-        animation_frame='timestamp',
-        zoom=2,
+# --- Plot trajectories ---
+if not filtered.empty:
+    fig = px.line_mapbox(
+        filtered,
+        lat="LAT",
+        lon="LON",
+        color="VesselName",
+        line_group="VesselName",
+        hover_name="VesselName",
+        animation_frame=filtered["timestamp"].dt.strftime("%Y-%m-%d %H:%M:%S"),
+        zoom=7,
         height=600
     )
     fig.update_layout(mapbox_style="carto-positron")
-    fig.update_layout(margin={"r":0, "t":0, "l":0, "b":0})
-    st.plotly_chart(fig)
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    st.plotly_chart(fig, use_container_width=True)
 else:
-    st.warning("Animated map data is missing required columns.")
+    st.warning("No data available for selected vessels in sea area.")
 
-# Data table
-st.subheader("📊 Latest Sample Data")
-st.dataframe(subset)
+# --- Data Preview ---
+st.subheader("📄 Current Sample Data")
+st.dataframe(filtered.head(20))
 
-# Refresh every 3 seconds
-time.sleep(3)
+# --- Auto refresh every 5 seconds ---
+time.sleep(5)
 st.rerun()
