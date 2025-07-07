@@ -22,8 +22,19 @@ def load_data():
     return df
 
 # Load animated data separately
+# Load and filter animated data for sea region only
 def load_animated_data():
-    return pd.read_csv("ais_animated_trajectory_sample.csv")
+    df = pd.read_csv("ais_animated_trajectory_sample.csv")
+    # Clean LAT/LON
+    df["LAT"] = pd.to_numeric(df["LAT"], errors="coerce")
+    df["LON"] = pd.to_numeric(df["LON"], errors="coerce")
+    df.dropna(subset=["LAT", "LON"], inplace=True)
+    
+    # Filter out land points
+    df = df[(df["LAT"] >= 0.5) & (df["LAT"] <= 2.0) &
+            (df["LON"] >= 101.0) & (df["LON"] <= 105.0)]
+    
+    return df
 
 # Load and prepare data
 df = load_data()
