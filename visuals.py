@@ -1,35 +1,43 @@
 import pandas as pd
 import folium
 
-# Load AIS data
+# Load the cleaned AIS CSV file
 df = pd.read_csv("ais_cleaned_trajectories.csv")
 
-# Create base map centered around the average location
-center_lat = df["LAT"].mean()
-center_lon = df["LON"].mean()
-m = folium.Map(location=[center_lat, center_lon], zoom_start=8)
+# Create base map centered around mean coordinates
+m = folium.Map(location=[df["LAT"].mean(), df["LON"].mean()], zoom_start=8)
 
-# Get unique vessel names
+# Group by each vessel
 vessels = df["VesselName"].unique()
 
-# Plot each vessel's path
 for vessel in vessels:
+    # Filter and sort each vessel's data by timestamp
     ship_data = df[df["VesselName"] == vessel].sort_values("timestamp")
-    
-    # Get coordinates
     coords = list(zip(ship_data["LAT"], ship_data["LON"]))
-
-    # Draw trajectory as blue line
-    folium.PolyLine(coords, color="blue", weight=3, opacity=0.7).add_to(m)
     
-    # Place red markers with timestamps every few points
-    for i in range(0, len(ship_data), 5):  # every 5th point
-        folium.Marker(
+    # Skip if not enough points for a line
+    if len(coords) < 2:
+        continue
+
+    # Draw the trajectory as a blue line
+    folium.PolyLine(
+        coords,
+        color="blue",
+        weight=3,
+        opacity=0.7
+    ).add_to(m)
+
+    # Add red markers with timestamp popup every 5 steps
+    for i in range(0, len(ship_data), 5):
+        folium.CircleMarker(
             location=[ship_data.iloc[i]["LAT"], ship_data.iloc[i]["LON"]],
-            popup=f"{vessel}<br>{ship_data.iloc[i]['timestamp']}",
-            icon=folium.Icon(color='red', icon='info-sign')
+            radius=3,
+            color='red',
+            fill=True,
+            fill_opacity=0.7,
+            popup=f"{vessel}<br>{ship_data.iloc[i]['timestamp']}"
         ).add_to(m)
 
-# Save the interactive map
+# Save the map to an HTML file
 m.save("ship_trajectories_map.html")
 print("✅ Map saved as ship_trajectories_map.html")
