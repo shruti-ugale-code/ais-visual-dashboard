@@ -1,33 +1,38 @@
+import streamlit as st
 import pandas as pd
 import folium
+from folium import plugins
+import streamlit.components.v1 as components
 
-# Load the cleaned AIS CSV file
+# Page title
+st.set_page_config(layout="wide")
+st.title("🚢 AIS Ship Trajectories Map")
+
+# Load AIS data
 df = pd.read_csv("ais_cleaned_trajectories.csv")
 
-# Create base map centered around mean coordinates
+if df.empty:
+    st.warning("The CSV file is empty.")
+    st.stop()
+
+# Create folium map centered at average location
 m = folium.Map(location=[df["LAT"].mean(), df["LON"].mean()], zoom_start=8)
 
-# Group by each vessel
+# Get unique vessel names
 vessels = df["VesselName"].unique()
 
+# Loop over vessels and plot
 for vessel in vessels:
-    # Filter and sort each vessel's data by timestamp
     ship_data = df[df["VesselName"] == vessel].sort_values("timestamp")
     coords = list(zip(ship_data["LAT"], ship_data["LON"]))
-    
-    # Skip if not enough points for a line
+
     if len(coords) < 2:
-        continue
+        continue  # skip if not enough points
 
-    # Draw the trajectory as a blue line
-    folium.PolyLine(
-        coords,
-        color="blue",
-        weight=3,
-        opacity=0.7
-    ).add_to(m)
+    # Draw blue trajectory line
+    folium.PolyLine(coords, color="blue", weight=3, opacity=0.7).add_to(m)
 
-    # Add red markers with timestamp popup every 5 steps
+    # Add red circle markers every 5th point with timestamp
     for i in range(0, len(ship_data), 5):
         folium.CircleMarker(
             location=[ship_data.iloc[i]["LAT"], ship_data.iloc[i]["LON"]],
@@ -38,6 +43,12 @@ for vessel in vessels:
             popup=f"{vessel}<br>{ship_data.iloc[i]['timestamp']}"
         ).add_to(m)
 
-# Save the map to an HTML file
-m.save("ship_trajectories_map.html")
-print("✅ Map saved as ship_trajectories_map.html")
+# Save the map
+map_file = "map.html"
+m.save(map_file)
+
+# Display map in Streamlit
+with open(map_file, "r", encoding="utf-8") as f:
+    map_html = f.read()
+
+components.html(map_html, height=700)
