@@ -1,42 +1,41 @@
 import pandas as pd
 import folium
-from folium.plugins import AntPath
+from streamlit_folium import st_folium
+import streamlit as st
 
-# Load your data
+# Load data
 df = pd.read_csv("ship_data_sample.csv")
 
-# Optional: convert Date to datetime
-df["Date"] = pd.to_datetime(df["Date"])
+# Update columns (17 columns as per your CSV)
+df.columns = ["MMSI", "Date", "Latitude", "Longitude", "Unknown1", "Unknown2", "ShipType",
+              "ShipName", "IMO", "CallSign", "k", "L", "M", "N", "o", "p", "Class"]
 
-# Group by vessel
-grouped = df.groupby("VesselName")
+# Drop rows with missing coordinates
+df = df.dropna(subset=["Latitude", "Longitude"])
 
-# Create a map centered on the average location
-avg_lat = df["Latitude"].mean()
-avg_lon = df["Longitude"].mean()
-ship_map = folium.Map(location=[avg_lat, avg_lon], zoom_start=5)
+# Group by ShipName
+grouped = df.groupby("ShipName")
 
-# Loop through each ship's data
+# Create Streamlit app
+st.title("Ship Trajectories on Map")
+
+# Create base map
+m = folium.Map(location=[df["Latitude"].mean(), df["Longitude"].mean()], zoom_start=5)
+
+# Plot each ship's trajectory
 for name, group in grouped:
-    group_sorted = group.sort_values("Date")
+    points = list(zip(group["Latitude"], group["Longitude"]))
+    folium.PolyLine(points, color="blue", weight=2.5, opacity=1).add_to(m)
 
-    # Plot trajectory as a blue AntPath line
-    points = list(zip(group_sorted["Latitude"], group_sorted["Longitude"]))
-    AntPath(points, color='blue', weight=3).add_to(ship_map)
-
-    # Add red dots and timestamps
-    for _, row in group_sorted.iterrows():
+    for _, row in group.iterrows():
         folium.CircleMarker(
             location=(row["Latitude"], row["Longitude"]),
-            radius=4,
-            color='red',
+            radius=3,
+            color="red",
             fill=True,
-            fill_color='red',
-        ).add_to(ship_map)
-        folium.map.Marker(
-            [row["Latitude"], row["Longitude"]],
-            icon=folium.DivIcon(html=f"""<div style="font-size: 8pt">{row["Date"].date()}</div>""")
-        ).add_to(ship_map)
+            fill_color="red",
+            popup=f"{name}\n{row['Date']}",
+        ).add_to(m)
 
-# Save to HTML
-ship_map.save("ship_trajectories_map.html")
+# Show the map in Streamlit
+st_folium(m, width=1200, height=700)
