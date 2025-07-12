@@ -17,7 +17,7 @@ df.columns = ['MMSI', 'Date', 'Latitude', 'Longitude', 'Speed', 'Course', 'ShipT
 df = df.dropna(subset=["Latitude", "Longitude"])
 
 # Group by ShipName
-grouped = df.groupby("ShipName")
+grouped = df.groupby("VesselName")
 
 # Create Streamlit app
 st.title("Ship Trajectories on Map")
