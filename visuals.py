@@ -1,61 +1,42 @@
-import streamlit as st
 import pandas as pd
 import folium
-from folium import plugins
-import streamlit.components.v1 as components
+from folium.plugins import AntPath
 
-# Page settings
-st.set_page_config(layout="wide")
-st.title("🚢 AIS Ship Trajectories Map")
+# Load your data
+df = pd.read_csv("ship_data_sample.csv")
 
-# Load AIS data
-df = pd.read_csv("ais_cleaned_trajectories.csv")
+# Optional: convert Date to datetime
+df["Date"] = pd.to_datetime(df["Date"])
 
-if df.empty:
-    st.warning("The CSV file is empty.")
-    st.stop()
+# Group by vessel
+grouped = df.groupby("VesselName")
 
-# Create Folium map centered around average ship location
-m = folium.Map(location=[df["LAT"].mean(), df["LON"].mean()], zoom_start=8)
+# Create a map centered on the average location
+avg_lat = df["Latitude"].mean()
+avg_lon = df["Longitude"].mean()
+ship_map = folium.Map(location=[avg_lat, avg_lon], zoom_start=5)
 
-# Get list of unique vessels
-vessels = df["VesselName"].unique()
+# Loop through each ship's data
+for name, group in grouped:
+    group_sorted = group.sort_values("Date")
 
-# Loop through each ship and draw its trajectory
-for vessel in vessels:
-    ship_data = df[df["VesselName"] == vessel].sort_values("timestamp")
-    coords = list(zip(ship_data["LAT"], ship_data["LON"]))
+    # Plot trajectory as a blue AntPath line
+    points = list(zip(group_sorted["Latitude"], group_sorted["Longitude"]))
+    AntPath(points, color='blue', weight=3).add_to(ship_map)
 
-    # Skip ships with fewer than 2 points
-    if len(coords) < 2:
-        continue
-
-    # Draw trajectory as a blue line
-    folium.PolyLine(
-        coords,
-        color="blue",
-        weight=3,
-        opacity=0.7
-    ).add_to(m)
-
-    # Add red circle markers with timestamps every 5th point
-    for i in range(0, len(ship_data), 5):
+    # Add red dots and timestamps
+    for _, row in group_sorted.iterrows():
         folium.CircleMarker(
-            location=[ship_data.iloc[i]["LAT"], ship_data.iloc[i]["LON"]],
-            radius=3,
+            location=(row["Latitude"], row["Longitude"]),
+            radius=4,
             color='red',
             fill=True,
-            fill_opacity=0.7,
-            popup=f"{vessel}<br>{ship_data.iloc[i]['timestamp']}"
-        ).add_to(m)
+            fill_color='red',
+        ).add_to(ship_map)
+        folium.map.Marker(
+            [row["Latitude"], row["Longitude"]],
+            icon=folium.DivIcon(html=f"""<div style="font-size: 8pt">{row["Date"].date()}</div>""")
+        ).add_to(ship_map)
 
-# Save map to HTML
-m.save("map.html")
-
-# Read HTML and render in Streamlit using iframe
-with open("map.html", "r", encoding="utf-8") as f:
-    map_html = f.read()
-
-components.html(map_html, height=700, scrolling=False)
-
-components.html(map_html, height=700)
+# Save to HTML
+ship_map.save("ship_trajectories_map.html")
