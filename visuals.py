@@ -7,8 +7,11 @@ import streamlit as st
 df = pd.read_csv("ship_data_sample.csv")
 
 # Update columns (17 columns as per your CSV)
-df.columns = ["MMSI", "Date", "Latitude", "Longitude", "Unknown1", "Unknown2", "ShipType",
-              "ShipName", "IMO", "CallSign", "k", "L", "M", "N", "o", "p", "Class"]
+# This is correct for your file
+df.columns = ['MMSI', 'Date', 'Latitude', 'Longitude', 'Speed', 'Course', 'ShipType',
+              'VesselName', 'IMO', 'CallSign', 'Length', 'Width', 'Draft',
+              'Cargo', 'HazardousCargo', 'Region']
+
 
 # Drop rows with missing coordinates
 df = df.dropna(subset=["Latitude", "Longitude"])
