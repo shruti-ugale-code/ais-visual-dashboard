@@ -37,6 +37,20 @@ column_mapping = {
     14: 'HazardousCargo',
     15: 'Region'
 }
+# After reading CSVs and merging
+df = pd.concat(all_dataframes, ignore_index=True)
+
+# ✅ Paste here
+df = df.dropna(subset=["Latitude", "Longitude"])
+df["Latitude"] = pd.to_numeric(df["Latitude"], errors="coerce")
+df["Longitude"] = pd.to_numeric(df["Longitude"], errors="coerce")
+df = df.dropna(subset=["Latitude", "Longitude"])
+
+# Map center calculation will now work
+m = folium.Map(
+    location=[df["Latitude"].mean(), df["Longitude"].mean()],
+    zoom_start=5
+)
 
 # Load and merge all CSVs
 frames = []
@@ -114,3 +128,4 @@ if "VesselName" in df.columns:
 
 # Show map
 st_folium(m, width=1200, height=700)
+
