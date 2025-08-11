@@ -37,6 +37,25 @@ column_mapping = {
     14: 'HazardousCargo',
     15: 'Region'
 }
+import glob
+
+# List of all your CSV files
+csv_files = [
+    "file1.csv",
+    "file2.csv",
+    "file3.csv"
+    # add all your ship CSV filenames here
+]
+
+# Read each CSV into a dataframe and store in a list
+all_dataframes = []
+for file in csv_files:
+    df_temp = pd.read_csv(file)
+    all_dataframes.append(df_temp)
+
+# Combine them into one dataframe
+df = pd.concat(all_dataframes, ignore_index=True)
+
 # After reading CSVs and merging
 df = pd.concat(all_dataframes, ignore_index=True)
 
@@ -128,4 +147,5 @@ if "VesselName" in df.columns:
 
 # Show map
 st_folium(m, width=1200, height=700)
+
 
